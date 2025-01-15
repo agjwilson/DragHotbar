@@ -2,13 +2,7 @@ Hooks.once('init', async function() {
   console.log('DragEverything | Initializing DragEverything module');
 
   // Register settings for saving positions
-  game.settings.register('DragEverything', 'playerListPosition', {
-    name: 'Player List Position',
-    scope: 'client',
-    config: false,
-    type: Object,
-    default: {},
-  });
+
 
   game.settings.register('DragEverything', 'hotbarPosition', {
     name: 'Hotbar Position',
@@ -18,21 +12,9 @@ Hooks.once('init', async function() {
     default: {},
   });
 
-  game.settings.register('DragEverything', 'sidebarPosition', {
-    name: 'Sidebar Position',
-    scope: 'client',
-    config: false,
-    type: Object,
-    default: {},
-  });
 
-  game.settings.register('DragEverything', 'sidebarHeight', {
-    name: 'Sidebar Height',
-    scope: 'client',
-    config: false,
-    type: Number,
-    default: window.innerHeight,  // Default to full height
-  });
+
+
 });
 
 Hooks.once('ready', function() {
@@ -121,41 +103,7 @@ Hooks.once('ready', function() {
     }
   }
 
-  function makePlayersListDraggable() {
-    const elementId = 'players';
-    const settingName = 'playerListPosition';
-    const element = document.getElementById(elementId);
-    if (element) {
-      const handle = element.querySelector('h3');
-      if (!handle.querySelector('.drag-icon')) {
-        const dragIcon = document.createElement('i');
-        dragIcon.className = 'fas fa-arrows-alt drag-icon';
-        handle.appendChild(dragIcon);
 
-        const savedPosition = game.settings.get('DragEverything', settingName);
-        if (savedPosition && savedPosition.top !== undefined && savedPosition.left !== undefined) {
-          element.style.top = `${savedPosition.top}px`;
-          element.style.left = `${savedPosition.left}px`;
-          element.style.position = 'absolute';
-        }
-
-        $(element).draggable({
-          handle: '.drag-icon',
-          containment: 'window',
-          stop: (event, ui) => {
-            const position = ui.helper.position();
-            game.settings.set('DragEverything', settingName, {
-              top: position.top,
-              left: position.left,
-            });
-            element.style.transform = '';
-          },
-        });
-
-        console.log(`Draggable icon added and draggable functionality applied to ${elementId}`);
-      }
-    }
-  }
 
   function makeHotbarDraggable() {
     const elementId = 'hotbar';
@@ -193,37 +141,13 @@ Hooks.once('ready', function() {
     }
   }
 
-  function makeSidebarDraggable() {
-    // Use the settings tab as the point before which to insert the drag icon
-    makeElementDraggable('ui-right', 'sidebarPosition', 'a.item[data-tab="settings"]');
-  }
 
-  // Check if jQuery UI is loaded
-  if (typeof $.ui === 'undefined') {
-    const script = document.createElement('script');
-    script.src = 'https://code.jquery.com/ui/1.12.1/jquery-ui.min.js';
-    script.onload = () => {
-      makePlayersListDraggable();
-      makeHotbarDraggable();
-      makeSidebarDraggable();
-    };
-    document.head.appendChild(script);
-  } else {
-    makePlayersListDraggable();
-    makeHotbarDraggable();
-    makeSidebarDraggable();
-  }
 
-  // Hook into render events to ensure the icons are added after each render
-  Hooks.on('renderPlayerList', (app, html, data) => {
-    makePlayersListDraggable();
-  });
+
 
   Hooks.on('renderHotbar', (app, html, data) => {
     makeHotbarDraggable();
   });
 
-  Hooks.on('renderSidebarTab', (app, html, data) => {
-    makeSidebarDraggable();
-  });
+
 });
